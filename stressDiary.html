@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stress Diary</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        th, td {
+            min-width: 150px;
+        }
+        .input-field {
+            width: 100%;
+            border: none;
+            outline: none;
+            background-color: transparent;
+            text-align: inherit; /* Inherit alignment from parent cell */
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 lg:p-12">
+
+    <div class="max-w-7xl mx-auto bg-white rounded-xl shadow-lg p-6 md:p-8">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Stress Diary Template</h1>
+        
+
+        <div class="table-container">
+            <table class="w-full text-sm text-left text-gray-500 rounded-lg overflow-hidden">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                    <tr>
+                        <th scope="col" class="py-3 px-6 text-center border border-gray-300">
+                            Date and Time
+                        </th>
+                        <th scope="col" class="py-3 px-6 text-center border border-gray-300">
+                            Most Recent Stressful Event Experienced
+                        </th>
+                        <th scope="col" class="py-3 px-6 text-center border border-gray-300">
+                            How Happy Do You Feel Now? (Scale 0-10)
+                        </th>
+                        <th scope="col" class="py-3 px-6 text-center border border-gray-300">
+                            Your Current Mood
+                        </th>
+                        <th scope="col" class="py-3 px-6 text-center border border-gray-300">
+                            How Effectively Are You Working Now? (0-10)
+                        </th>
+                        <th scope="col" class="py-3 px-6 text-center border border-gray-300">
+                            Fundamental Cause of the Event
+                        </th>
+                        <th scope="col" class="py-3 px-6 text-center border border-gray-300">
+                            How Stressed Do You Feel Now? (Scale 0-10)
+                        </th>
+                        <th scope="col" class="py-3 px-6 text-center border border-gray-300">
+                            Physical Symptoms During Stressful Event
+                        </th>
+                        <th scope="col" class="py-3 px-6 text-center border border-gray-300">
+                            How Well Did You Handle the Event?
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="bg-white border-b hover:bg-gray-50">
+                        <td class="py-4 px-6 border border-gray-300"><input type="text" class="input-field" placeholder="e.g., June 6, 9:15 a.m."></td>
+                        <td class="py-4 px-6 border border-gray-300"><input type="text" class="input-field" placeholder="e.g., Event details"></td>
+                        <td class="py-4 px-6 border border-gray-300 text-center"><input type="text" class="input-field" placeholder="0-10"></td>
+                        <td class="py-4 px-6 border border-gray-300"><input type="text" class="input-field" placeholder="e.g., Anxious"></td>
+                        <td class="py-4 px-6 border border-gray-300 text-center"><input type="text" class="input-field" placeholder="0-10"></td>
+                        <td class="py-4 px-6 border border-gray-300"><input type="text" class="input-field" placeholder="e.g., Boss"></td>
+                        <td class="py-4 px-6 border border-gray-300 text-center"><input type="text" class="input-field" placeholder="0-10"></td>
+                        <td class="py-4 px-6 border border-gray-300"><input type="text" class="input-field" placeholder="e.g., Headache"></td>
+                        <td class="py-4 px-6 border border-gray-300"><input type="text" class="input-field" placeholder="e.g., Handled poorly"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-8 flex justify-center">
+            <button id="addRowBtn" class="bg-black text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300">
+                Add New Row
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const addRowBtn = document.getElementById('addRowBtn');
+            const tableBody = document.querySelector('tbody');
+
+            addRowBtn.addEventListener('click', () => {
+                const newRow = document.createElement('tr');
+                newRow.className = 'bg-white border-b hover:bg-gray-50';
+                newRow.innerHTML = `
+                    <td class="py-4 px-6 border border-gray-300"><input type="text" class="input-field"></td>
+                    <td class="py-4 px-6 border border-gray-300"><input type="text" class="input-field"></td>
+                    <td class="py-4 px-6 border border-gray-300 text-center"><input type="text" class="input-field"></td>
+                    <td class="py-4 px-6 border border-gray-300"><input type="text" class="input-field"></td>
+                    <td class="py-4 px-6 border border-gray-300 text-center"><input type="text" class="input-field"></td>
+                    <td class="py-4 px-6 border border-gray-300"><input type="text" class="input-field"></td>
+                    <td class="py-4 px-6 border border-gray-300 text-center"><input type="text" class="input-field"></td>
+                    <td class="py-4 px-6 border border-gray-300"><input type="text" class="input-field"></td>
+                    <td class="py-4 px-6 border border-gray-300"><input type="text" class="input-field"></td>
+                `;
+                tableBody.appendChild(newRow);
+            });
+        });
+    </script>
+</body>
+</html>

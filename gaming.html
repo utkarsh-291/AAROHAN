@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mindful Campus - Relaxing Activities</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: white;
+            color: #1f2937;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: radial-gradient(white 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .container {
+            max-width: 960px;
+            width: 100%;
+            background-color: #f2d8aa;
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            padding: 2.5rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .breathing-box {
+            width: 200px;
+            height: 200px;
+            margin: 2rem auto;
+            background-color: #60a5fa;
+            border-radius: 50%;
+            transition: all 4s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+        .breathing-box.inhale {
+            transform: scale(1.2);
+            background-color: #34d399;
+            box-shadow: 0 10px 15px -3px rgba(52, 211, 153, 0.5), 0 4px 6px -2px rgba(52, 211, 153, 0.25);
+        }
+        .breathing-box.exhale {
+            transform: scale(0.8);
+            background-color: #f87171;
+            box-shadow: 0 10px 15px -3px rgba(248, 113, 113, 0.5), 0 4px 6px -2px rgba(248, 113, 113, 0.25);
+        }
+        .breathing-box.hold {
+            transform: scale(1);
+            background-color: #60a5fa;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+        .om-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 2rem auto;
+        }
+        .om-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 5px solid #6366f1;
+            border-radius: 50%;
+            transition: all 1s ease-in-out;
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.7);
+        }
+        .meditation-text {
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-style: italic;
+        }
+        button {
+            transition: all 0.3s ease-in-out;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-200 p-4">
+
+    <div class="container">
+        <h1 class="text-3xl md:text-4xl font-bold text-brown-500 mb-2">Mind Relaxing Activities</h1>
+        <p class="text-gray-600 mb-12">Take a moment to relax and refocus your mind with these interactive tools.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Breathing Exercise Card -->
+            <section class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-2">
+                <h2 class="text-2xl font-semibold mb-4 text-black-700">Breathing Exercise</h2>
+                <p class="text-gray-500 mb-4">Follow the circle to regulate your breathing. Inhale, hold, and exhale.</p>
+                <div id="breathing-box" class="breathing-box"></div>
+                <p id="breathing-instruction" class="text-xl font-medium text-black-600 mt-4">Inhale</p>
+            </section>
+
+            <!-- OM Chanting Card -->
+            <section class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-2">
+                <h2 class="text-2xl font-semibold mb-4 text-black-700">OM Chanting Visualizer</h2>
+                <p class="text-gray-500 mb-4">Focus on the expanding circle as you chant "OM".</p>
+                <div id="om-container" class="om-container"></div>
+                <button id="start-om-btn" class="bg-black text-white font-semibold py-2 px-6 rounded-full hover:bg-black-700 transition-colors duration-300">
+                    Start OM Chanting
+                </button>
+                <button id="stop-om-btn" class="bg-red-500 text-white font-semibold py-2 px-6 rounded-full hover:bg-red-600 transition-colors duration-300 hidden">
+                    Stop
+                </button>
+            </section>
+
+            <!-- Guided Meditation Card -->
+            <section class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-2">
+                <h2 class="text-2xl font-semibold mb-4 text-black-700">Guided Meditation</h2>
+                <p class="text-gray-500 mb-4">Follow the instructions to practice mindfulness.</p>
+                <div class="bg-gray-100 p-6 rounded-lg shadow-inner meditation-text">
+                    <p id="meditation-text" class="text-lg text-gray-700">Press 'Start' to begin the meditation.</p>
+                </div>
+                <div class="mt-6 flex justify-center gap-4">
+                    <button id="start-meditation-btn" class="bg-black text-white font-semibold py-2 px-6 rounded-full transition-colors duration-300">
+                        Start
+                    </button>
+                    <button id="stop-meditation-btn" class="bg-red-500 text-black font-semibold py-2 px-6 rounded-full hover:bg-red-600 transition-colors duration-300 hidden">
+                        Stop
+                    </button>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Breathing Exercise Logic
+            const breathingBox = document.getElementById('breathing-box');
+            const breathingInstruction = document.getElementById('breathing-instruction');
+
+            const stages = [
+                { instruction: 'Inhale', class: 'inhale', duration: 4000 },
+                { instruction: 'Hold', class: 'hold', duration: 4000 },
+                { instruction: 'Exhale', class: 'exhale', duration: 4000 }
+            ];
+            let stageIndex = 0;
+
+            function startBreathingCycle() {
+                const stage = stages[stageIndex];
+                breathingInstruction.textContent = stage.instruction;
+                breathingBox.className = 'breathing-box ' + stage.class;
+                
+                stageIndex = (stageIndex + 1) % stages.length;
+
+                setTimeout(startBreathingCycle, stage.duration);
+            }
+            // Start the cycle after a short delay
+            setTimeout(startBreathingCycle, 100);
+
+            // OM Chanting Visualizer Logic
+            const omContainer = document.getElementById('om-container');
+            const startOmBtn = document.getElementById('start-om-btn');
+            const stopOmBtn = document.getElementById('stop-om-btn');
+            let omInterval;
+
+            function startOmChanting() {
+                startOmBtn.classList.add('hidden');
+                stopOmBtn.classList.remove('hidden');
+                omContainer.innerHTML = '';
+                let size = 20;
+
+                omInterval = setInterval(() => {
+                    const circle = document.createElement('div');
+                    circle.className = 'om-circle';
+                    circle.style.width = `${size}px`;
+                    circle.style.height = `${size}px`;
+                    circle.style.opacity = '1';
+                    omContainer.appendChild(circle);
+
+                    setTimeout(() => {
+                        circle.style.opacity = '0';
+                        circle.style.width = '200px';
+                        circle.style.height = '200px';
+                    }, 50);
+
+                    setTimeout(() => {
+                        omContainer.removeChild(circle);
+                    }, 1100);
+                }, 1000);
+            }
+
+            function stopOmChanting() {
+                clearInterval(omInterval);
+                omContainer.innerHTML = '';
+                startOmBtn.classList.remove('hidden');
+                stopOmBtn.classList.add('hidden');
+            }
+
+            startOmBtn.addEventListener('click', startOmChanting);
+            stopOmBtn.addEventListener('click', stopOmChanting);
+            
+            // Guided Meditation Logic
+            const startMeditationBtn = document.getElementById('start-meditation-btn');
+            const stopMeditationBtn = document.getElementById('stop-meditation-btn');
+            const meditationText = document.getElementById('meditation-text');
+            let meditationTimeout;
+            let meditationIndex = 0;
+
+            const meditationScript = [
+                { text: "Find a comfortable position, either sitting or lying down.", duration: 5000 },
+                { text: "Gently close your eyes if you feel comfortable.", duration: 5000 },
+                { text: "Take a deep breath in through your nose...", duration: 5000 },
+                { text: "...and slowly exhale through your mouth.", duration: 5000 },
+                { text: "Bring your attention to the feeling of your breath.", duration: 6000 },
+                { text: "Notice how your body rises and falls with each breath.", duration: 7000 },
+                { text: "Let go of any thoughts that come into your mind, and gently bring your focus back to your breath.", duration: 10000 },
+                { text: "You are doing great. Continue to breathe gently and deeply.", duration: 8000 },
+                { text: "When you are ready, you can slowly open your eyes.", duration: 5000 },
+                { text: "Meditation complete. You can close this window now.", duration: 3000 }
+            ];
+
+            function startMeditation() {
+                startMeditationBtn.classList.add('hidden');
+                stopMeditationBtn.classList.remove('hidden');
+                meditationIndex = 0;
+                runMeditationStep();
+            }
+
+            function stopMeditation() {
+                clearTimeout(meditationTimeout);
+                meditationText.textContent = "Meditation stopped. Press 'Start' to begin again.";
+                startMeditationBtn.classList.remove('hidden');
+                stopMeditationBtn.classList.add('hidden');
+            }
+
+            function runMeditationStep() {
+                if (meditationIndex < meditationScript.length) {
+                    const step = meditationScript[meditationIndex];
+                    meditationText.textContent = step.text;
+                    meditationIndex++;
+                    meditationTimeout = setTimeout(runMeditationStep, step.duration);
+                } else {
+                    stopMeditationBtn.classList.add('hidden');
+                    startMeditationBtn.classList.remove('hidden');
+                }
+            }
+
+            startMeditationBtn.addEventListener('click', startMeditation);
+            stopMeditationBtn.addEventListener('click', stopMeditation);
+        });
+    </script>
+</body>
+</html>

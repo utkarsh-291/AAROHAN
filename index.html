@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aarohan - Your Mental Health Companion</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="light-mode">
+
+  <header class="main-header">
+    <div class="header-content">
+      <div class="logo">
+        <img src="generated-image.png" alt="Aarohan Logo">
+        <h1>AAROHAN</h1>
+      </div>
+      <nav class="main-nav">
+        <a href="chatbot.html">Chatbot</a>
+        <a href="quiz.html">Quiz</a>
+        <a href="mood.html">Mood Journal</a>
+        <a href="gaming.html">Relaxation</a>
+        <a href="sos.html" class="sos-button">
+            <span class="material-icons">sos</span>
+            SOS
+        </a>
+      </nav>
+      <button id="mode-toggle" class="mode-toggle-button">
+        <span class="material-icons sun-icon">wb_sunny</span>
+        <span class="material-icons moon-icon">brightness_2</span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div id="particles-js"></div>
+      <div class="hero-content">
+        <h2 class="hero-title">
+            Your Path to Mental Wellness
+            <svg class="title-underline" viewBox="0 0 292 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 13.3132C21.6489 9.17382 58.7072 5.25338 97.234 6.99477C135.761 8.73617 172.969 16.084 207.382 17.6322C241.795 19.1803 274.526 14.8967 289.973 12.015" stroke="url(#paint0_linear_1_2)" stroke-width="4" stroke-linecap="round"/>
+                <defs>
+                    <linearGradient id="paint0_linear_1_2" x1="2.00002" y1="14.5" x2="290" y2="14.5" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#007BFF"/>
+                        <stop offset="1" stop-color="#0056b3"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+        </h2>
+        <p class="hero-subtitle animate-on-scroll">A safe and supportive space for students. Find resources, track your mood, and connect with our AI assistant whenever you need to talk.</p>
+        <a href="chatbot.html" class="cta-button animate-on-scroll">Talk to an Assistant</a>
+      </div>
+    </section>
+
+    <section class="features">
+        <h3 class="section-title animate-on-scroll">Features Designed for You</h3>
+        <div class="features-grid">
+            <div class="card animate-on-scroll">
+                <div class="card-icon">🧠</div>
+                <h3>AI Chat Support</h3>
+                <p>Chat with our friendly AI assistant for instant guidance and mental health check-ins, 24/7.</p>
+            </div>
+            <div class="card animate-on-scroll">
+                <div class="card-icon">📔</div>
+                <h3>Mood Journal</h3>
+                <p>Track your daily moods and thoughts to better understand your emotional patterns and well-being.</p>
+            </div>
+            <div class="card animate-on-scroll">
+                <div class="card-icon">🎮</div>
+                <h3>Relaxation Activities</h3>
+                <p>Engage in calming games and guided exercises designed to reduce stress and promote mindfulness.</p>
+            </div>
+            <div class="card animate-on-scroll">
+                <div class="card-icon">❓</div>
+                <h3>Self-Assessment Quiz</h3>
+                <p>Take a quick quiz to gain insight into your current mental state and discover helpful resources.</p>
+            </div>
+        </div>
+    </section>
+  </main>
+
+  <footer class="main-footer">
+    <p>&copy; 2025 Aarohan | For Mental Wellbeing ❤️</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const modeToggle = document.getElementById('mode-toggle');
+        const body = document.body;
+
+        // Restore dark mode preference
+        const savedMode = localStorage.getItem('themeMode');
+        if (savedMode === 'dark-mode') {
+            body.classList.add('dark-mode');
+            body.classList.remove('light-mode');
+        } else {
+            body.classList.add('light-mode');
+            body.classList.remove('dark-mode');
+        }
+
+        modeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            body.classList.toggle('light-mode');
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('themeMode', 'dark-mode');
+            } else {
+                localStorage.setItem('themeMode', 'light-mode');
+            }
+            // Re-init particles with new colors
+            initParticles();
+        });
+
+        // --- GSAP Animations ---
+        gsap.registerPlugin(ScrollTrigger);
+        
+        // **BUG FIX & ENHANCEMENT**: Animate hero title with a clip-path reveal
+        const heroTitle = document.querySelector('.hero-title');
+        // Split the text into words, then letters
+        const words = heroTitle.textContent.trim().split(' ');
+        heroTitle.innerHTML = ''; // Clear original text
+        words.forEach(word => {
+            const wordDiv = document.createElement('div');
+            wordDiv.style.display = 'inline-block';
+            wordDiv.style.marginRight = '0.5em'; // Space between words
+            word.split('').forEach(letter => {
+                const span = document.createElement('span');
+                span.textContent = letter;
+                span.style.display = 'inline-block';
+                wordDiv.appendChild(span);
+            });
+            heroTitle.appendChild(wordDiv);
+        });
+
+        gsap.from(heroTitle.querySelectorAll("span"), {
+            duration: 0.8,
+            y: '100%',
+            ease: "power3.out",
+            stagger: 0.04,
+        });
+        
+        // Animate the SVG underline
+        gsap.from(".title-underline", {
+            duration: 1.5,
+            drawSVG: "0%",
+            ease: "power2.inOut",
+            delay: 0.5
+        });
+
+
+        // Scroll-triggered animations for other elements
+        const elementsToAnimate = document.querySelectorAll('.animate-on-scroll');
+        elementsToAnimate.forEach(el => {
+            gsap.from(el, {
+                scrollTrigger: {
+                    trigger: el,
+                    start: "top 85%",
+                    toggleActions: "play none none none"
+                },
+                opacity: 0,
+                y: 50,
+                duration: 0.8,
+                ease: "power3.out"
+            });
+        });
+
+        // --- Particles.js Initialization ---
+        function initParticles() {
+            const isDarkMode = body.classList.contains('dark-mode');
+            const particleColor = isDarkMode ? "#8b949e" : "#577796";
+            const lineColor = isDarkMode ? "#30363d" : "#a0b3c4";
+
+            particlesJS('particles-js', {
+              "particles": {
+                "number": { "value": 60, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": particleColor },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.5, "random": true },
+                "size": { "value": 3, "random": true },
+                "line_linked": { "enable": true, "distance": 150, "color": lineColor, "opacity": 0.4, "width": 1 },
+                "move": { "enable": true, "speed": 1, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false }
+              },
+              "interactivity": {
+                "detect_on": "canvas",
+                "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" }, "resize": true },
+                "modes": { "grab": { "distance": 140, "line_linked": { "opacity": 1 } }, "push": { "particles_nb": 4 } }
+              },
+              "retina_detect": true
+            });
+        }
+        
+        initParticles(); // Initial call
+        
+        // Helper plugin for GSAP SVG drawing
+        (function(){var h,p,e,s,i,c,t;gsap.registerPlugin({name:"drawSVG",init:function init(q,k){p=document.createElementNS("http://www.w3.org/2000/svg","path");var u=q.tagName.toLowerCase();if(!u in{path:1,line:1,polyline:1,polygon:1,rect:1,ellipse:1,circle:1}){return false}e||(e=gsap.utils.toArray,s=gsap.utils.getUnit,i=gsap.getProperty,c=gsap.utils.normalize,t=Math.PI/180);function v(F){var G,H,I,J,K,L,M,N,O;if(!(F&&F.getBBox)){return}G=F.getBBox();H=(F.ownerSVGElement||document).width.baseVal.value;I=(F.ownerSVGElement||document).height.baseVal.value;J=F.getAttribute("transform");K=F.style;L=K.strokeWidth;M=F.getAttribute("stroke-width");N=F.getAttribute("stroke");O=F.getAttribute("stroke-linecap");F.style.strokeWidth=F.getAttribute("stroke-width")||i(F,"stroke-width")||"1px";F.style.stroke=F.getAttribute("stroke")||i(F,"stroke")||"black";F.style.strokeLinecap=F.getAttribute("stroke-linecap")||i(F,"stroke-linecap")||"butt";F.setAttribute("transform","");this.element=F;this.length=F.getTotalLength();this.BBox=G;this.viewBox={width:H,height:I};F.style.strokeWidth=L;F.style.stroke=N;F.style.strokeLinecap=O;F.setAttribute("transform",J)}this.styles="stroke-dasharray,stroke-dashoffset";this.v=k;this.element=q;this.uncache=true;if(!h){h=new v(q)}if(k===false){this.length=0;return}this.h=h;this.l=h.length;this.element.style.strokeDasharray=this.l+" "+this.l;this.offset=this.l-this.l*parseFloat(k);this.element.style.strokeDashoffset=this.offset},render:function render(q,k){var u=k.offset,B=k.l;k.element.style.strokeDashoffset=u-(B*q-u)*(1-q)}})})();
+    });
+  </script>
+
+</body>
+</html>
+

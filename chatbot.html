@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aarohan AI Assistant</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="chatbot.css">
+</head>
+<body class="light-mode">
+  <div class="background-animation"></div> <div class="container">
+    <div class="chat-header">
+      <h1 class="header-title">Aarohan AI Assistant</h1>
+      <button id="mode-toggle" class="mode-toggle-button">
+        <span class="material-icons sun-icon">wb_sunny</span>
+        <span class="material-icons moon-icon">brightness_2</span>
+      </button>
+    </div>
+
+    <div class="chat-messages" id="chat-messages">
+      <div class="bot-message-container initial-message">
+        <div class="bot-avatar">🧠</div>
+        <div class="message bot-message">Hi there! I'm Aarohan, your AI Assistant. What's on your mind?</div>
+      </div>
+    </div>
+
+    <form id="chat-input-form" class="chat-input-form">
+      <input type="text" id="chat-input" class="chat-input neumorphic-input" placeholder="Type your message..." autocomplete="off">
+      <button type="submit" class="chat-button neumorphic-button" title="Send">
+        <span class="material-icons">send</span>
+      </button>
+    </form>
+
+    <p class="privacy-note">🔒 Conversations are private and NOT stored on this server</p>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const chatInputForm = document.getElementById('chat-input-form');
+      const chatInput = document.getElementById('chat-input');
+      const chatMessages = document.getElementById('chat-messages');
+      const sendButton = document.querySelector('.chat-button');
+      const modeToggle = document.getElementById('mode-toggle');
+      const body = document.body;
+
+      // Restore dark mode preference on load
+      const savedMode = localStorage.getItem('themeMode');
+      if (savedMode === 'dark-mode') {
+        body.classList.add('dark-mode');
+        body.classList.remove('light-mode');
+      } else {
+        body.classList.add('light-mode');
+        body.classList.remove('dark-mode');
+      }
+
+      chatInputForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const userMessage = chatInput.value.trim();
+        if (userMessage) {
+          appendMessage('user', userMessage);
+          chatInput.value = '';
+          await getBotResponse(userMessage);
+        }
+      });
+
+      function appendMessage(sender, text) {
+        if (sender === 'user') {
+          const messageDiv = document.createElement('div');
+          messageDiv.classList.add('message', 'user-message');
+          messageDiv.textContent = text;
+          chatMessages.appendChild(messageDiv);
+        } else {
+          const botContainer = document.createElement('div');
+          botContainer.classList.add('bot-message-container');
+
+          const avatarDiv = document.createElement('div');
+          avatarDiv.classList.add('bot-avatar');
+          avatarDiv.textContent = '🧠';
+
+          const messageDiv = document.createElement('div');
+          messageDiv.classList.add('message', 'bot-message');
+          messageDiv.textContent = text;
+
+          botContainer.appendChild(avatarDiv);
+          botContainer.appendChild(messageDiv);
+          chatMessages.appendChild(botContainer);
+          return messageDiv; // Return the message div itself so it can be updated
+        }
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+
+      async function getBotResponse(message) {
+        chatInput.disabled = true;
+        sendButton.disabled = true;
+        sendButton.classList.add('sending'); // Add sending animation
+
+        const typingNode = appendMessage('bot', 'Thinking...');
+
+        try {
+          const resp = await fetch("http://127.0.0.1:8000/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message })
+          });
+          if (!resp.ok) throw new Error('Network response not ok');
+          const data = await resp.json();
+          typingNode.textContent = data.response;
+        } catch (err) {
+          typingNode.textContent = "Sorry — an error occurred. Please try again later.";
+        } finally {
+          chatInput.disabled = false;
+          sendButton.disabled = false;
+          sendButton.classList.remove('sending'); // Remove sending animation
+          chatInput.focus();
+        }
+      }
+
+      modeToggle.addEventListener('click', () => {
+        body.classList.toggle('dark-mode');
+        body.classList.toggle('light-mode');
+        // Save preference to local storage
+        if (body.classList.contains('dark-mode')) {
+          localStorage.setItem('themeMode', 'dark-mode');
+        } else {
+          localStorage.setItem('themeMode', 'light-mode');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

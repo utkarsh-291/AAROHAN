@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stress Forecasting</title>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      max-width: 700px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h1, h2 {
+      text-align: center;
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    input, button {
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background: black;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .forecast-box {
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .high { background: #ffe4e4; color: #b91c1c; }
+    .low { background: #e6ffed; color: #166534; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📊 Stress Forecasting</h1>
+    <p>Log your daily stress score (0–10) and see forecasted trends.</p>
+
+    <form id="stressForm">
+      <input type="date" id="date" required>
+      <input type="number" id="score" min="0" max="10" placeholder="Stress (0–10)" required>
+      <button type="submit">Add Entry</button>
+    </form>
+
+    <h2>Recent Stress Trend</h2>
+    <canvas id="stressChart"></canvas>
+
+    <div id="forecastBox" class="forecast-box"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById("stressForm");
+    const ctx = document.getElementById("stressChart").getContext("2d");
+    const forecastBox = document.getElementById("forecastBox");
+
+    let chartInstance;
+
+    function loadEntries() {
+      return JSON.parse(localStorage.getItem("stressEntries")) || [];
+    }
+
+    function saveEntries(entries) {
+      localStorage.setItem("stressEntries", JSON.stringify(entries));
+    }
+
+    function renderChart(entries) {
+      const labels = entries.map(e => e.date);
+      const scores = entries.map(e => e.score);
+
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+
+      chartInstance = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: labels,
+          datasets: [{
+            label: "Stress Score",
+            data: scores,
+            borderColor: "#4a90e2",
+            backgroundColor: "rgba(74,144,226,0.2)",
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: {
+          scales: {
+            y: { beginAtZero: true, max: 10 }
+          }
+        }
+      });
+    }
+
+    function calculateForecast(entries) {
+      if (entries.length === 0) {
+        forecastBox.textContent = "No data yet. Please add entries.";
+        forecastBox.className = "forecast-box";
+        return;
+      }
+
+      const last7 = entries.slice(-7);
+      const avg = last7.reduce((sum, e) => sum + e.score, 0) / last7.length;
+
+      if (avg > 6) {
+        forecastBox.textContent = `⚠️ High Stress Risk Ahead (Avg: ${avg.toFixed(1)})`;
+        forecastBox.className = "forecast-box high";
+      } else {
+        forecastBox.textContent = `✅ Low Stress Risk (Avg: ${avg.toFixed(1)})`;
+        forecastBox.className = "forecast-box low";
+      }
+    }
+
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      const date = document.getElementById("date").value;
+      const score = parseInt(document.getElementById("score").value);
+
+      if (!date || isNaN(score) || score < 0 || score > 10) {
+        alert("Please enter a valid date and stress score between 0–10.");
+        return;
+      }
+
+      const entries = loadEntries();
+      entries.push({ date, score });
+      saveEntries(entries);
+
+      form.reset();
+      update();
+    });
+
+    function update() {
+      const entries = loadEntries();
+      renderChart(entries);
+      calculateForecast(entries);
+    }
+
+    update();
+  </script>
+</body>
+</html>

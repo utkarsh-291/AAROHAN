@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SOS Support</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fff3f3;
+      text-align: center;
+      padding: 50px;
+    }
+    h1 {
+      color: #d32f2f;
+    }
+    p {
+      font-size: 1.2rem;
+    }
+    button {
+      background: #d32f2f;
+      color: white;
+      border: none;
+      padding: 15px 25px;
+      border-radius: 8px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    button:hover {
+      background: #b71c1c;
+    }
+    #mapLink {
+      margin-top: 20px;
+      display: block;
+      font-size: 1.1rem;
+      color: #1976d2;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🚨 SOS Emergency Support</h1>
+  <p>If you are in immediate danger, please call the emergency helpline.</p>
+
+  <!-- Main Emergency Call -->
+  <button id="sosBtn">Call Helpline & Share Location</button>
+
+  <p id="status"></p>
+  <a id="mapLink" target="_blank"></a>
+
+  <script>
+    const primaryNumber = "+917260062106";  // Replace with actual helpline
+    const backupNumber  = "+917489039757";  // Backup helpline
+
+    document.getElementById("sosBtn").addEventListener("click", () => {
+      document.getElementById("status").innerText = "Trying to connect & fetch location...";
+
+      // Redirect to dialer
+      window.location.href = `tel:${primaryNumber}`;
+
+      // Try to fetch location
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+            document.getElementById("status").innerText = `📍 Location captured!`;
+            document.getElementById("mapLink").innerText = "View My Location on Google Maps";
+            document.getElementById("mapLink").href = `https://www.google.com/maps?q=${lat},${lon}`;
+
+            // 👉 Send location to backend API (if you have one)
+            // fetch("https://your-server.com/api/location", {
+            //   method: "POST",
+            //   headers: { "Content-Type": "application/json" },
+            //   body: JSON.stringify({ latitude: lat, longitude: lon })
+            // });
+          },
+          (error) => {
+            document.getElementById("status").innerText = "⚠️ Unable to fetch location!";
+          }
+        );
+      } else {
+        document.getElementById("status").innerText = "❌ Geolocation not supported!";
+      }
+
+      // If no response in 15s, redirect to backup helpline
+      setTimeout(() => {
+        let confirmed = confirm("Are you safe? Do you want us to connect to backup helpline?");
+        if (!confirmed) {
+          document.getElementById("status").innerText = "Redirecting to backup helpline...";
+          window.location.href = `tel:${backupNumber}`;
+        }
+      }, 15000);
+    });
+  </script>
+
+</body>
+</html>

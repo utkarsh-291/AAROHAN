@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Counselor Appointment Booking</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        .container {
+            max-width: 600px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #1f2937;
+            font-weight: 700;
+        }
+        h1 {
+            font-size: 2.25rem;
+            margin-bottom: 0.5rem;
+        }
+        p {
+            text-align: center;
+            color: #6b7280;
+            margin-bottom: 2rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #374151;
+        }
+        input, select {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background-color: #f9fafb;
+        }
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-weight: 600;
+            color: white;
+            transition: all 0.2s ease;
+        }
+        button[type="submit"] {
+            background-color: #4f46e5;
+        }
+        button[type="submit"]:hover {
+            background-color: #4338ca;
+        }
+        .cancel {
+            background-color: #ef4444;
+            margin-top: 0.75rem;
+        }
+        .cancel:hover {
+            background-color: #dc2626;
+        }
+        #appointmentsList {
+            margin-top: 1.5rem;
+        }
+        .appointment-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f3f4f6;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            transition: transform 0.2s ease;
+        }
+        .appointment-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .appointment-info {
+            flex-grow: 1;
+        }
+        .appointment-info h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        .appointment-info p {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin: 0;
+            text-align: left;
+        }
+        .delete-btn {
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            width: auto;
+        }
+        .delete-btn:hover {
+            background-color: #dc2626;
+        }
+        .error-message {
+            color: #dc2626;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>👩‍⚕️ Counselor Appointment Booking</h1>
+        <p>Select a date, time and preferred mode to book your session</p>
+
+        <form id="bookingForm">
+            <label for="date">Date:</label>
+            <input type="date" id="date" required>
+
+            <label for="time">Time:</label>
+            <input type="time" id="time" required>
+
+            <label for="mode">Mode:</label>
+            <select id="mode" required>
+                <option value="">--Select--</option>
+                <option value="Chat">Chat</option>
+                <option value="Voice">Voice Call</option>
+                <option value="Video">Video Call</option>
+            </select>
+            <div id="error-message" class="error-message hidden"></div>
+            <button type="submit">Book Appointment</button>
+            <button type="button" class="cancel" id="cancelBtn">Cancel All Appointments</button>
+        </form>
+
+        <h2 class="mt-8">📅 Your Appointments</h2>
+        <div id="appointmentsList"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const bookingForm = document.getElementById('bookingForm');
+            const appointmentsList = document.getElementById('appointmentsList');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const errorMessage = document.getElementById('error-message');
+
+            // Load appointments from local storage on page load
+            let appointments = JSON.parse(localStorage.getItem('appointments')) || [];
+            renderAppointments();
+
+            bookingForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const date = document.getElementById('date').value;
+                const time = document.getElementById('time').value;
+                const mode = document.getElementById('mode').value;
+                
+                // Date and time validation
+                const bookingDateTime = new Date(`${date}T${time}`);
+                const currentDateTime = new Date();
+
+                if (bookingDateTime < currentDateTime) {
+                    errorMessage.textContent = 'You cannot book an appointment in the past.';
+                    errorMessage.classList.remove('hidden');
+                    return;
+                } else {
+                    errorMessage.classList.add('hidden');
+                }
+
+                if (date && time && mode) {
+                    const newAppointment = { date, time, mode };
+                    appointments.push(newAppointment);
+                    localStorage.setItem('appointments', JSON.stringify(appointments));
+                    renderAppointments();
+                    bookingForm.reset();
+                }
+            });
+
+            cancelBtn.addEventListener('click', () => {
+                appointments = [];
+                localStorage.setItem('appointments', JSON.stringify(appointments));
+                renderAppointments();
+            });
+
+            function renderAppointments() {
+                appointmentsList.innerHTML = '';
+                if (appointments.length === 0) {
+                    appointmentsList.innerHTML = '<p class="text-center text-gray-400">No appointments booked yet.</p>';
+                } else {
+                    appointments.forEach((appointment, index) => {
+                        const card = document.createElement('div');
+                        card.className = 'appointment-card';
+                        card.innerHTML = `
+                            <div class="appointment-info">
+                                <h3>Appointment #${index + 1}</h3>
+                                <p><strong>Date:</strong> ${appointment.date}</p>
+                                <p><strong>Time:</strong> ${appointment.time}</p>
+                                <p><strong>Mode:</strong> ${appointment.mode}</p>
+                            </div>
+                            <button class="delete-btn" data-index="${index}">Delete</button>
+                        `;
+                        appointmentsList.appendChild(card);
+                    });
+                    addDeleteEventListeners();
+                }
+            }
+
+            function addDeleteEventListeners() {
+                document.querySelectorAll('.delete-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const index = e.target.getAttribute('data-index');
+                        appointments.splice(index, 1);
+                        localStorage.setItem('appointments', JSON.stringify(appointments));
+                        renderAppointments();
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
