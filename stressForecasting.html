@@ -3,171 +3,378 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Stress Forecasting</title>
+  <title>Aarohan - Stress Forecasting</title>
+  
+  <!-- Main Stylesheet for header/footer consistency -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Google Fonts & Icons -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
-  <!-- Chart.js CDN -->
+  <!-- Chart.js CDN for creating the chart -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+  <!-- All CSS for this page is embedded here -->
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f7fa;
-      padding: 20px;
+    /* Page-specific styles */
+    .stress-main {
+      padding: 6rem 2rem 4rem;
+      margin-top: 80px;
       display: flex;
       justify-content: center;
+      align-items: flex-start;
+      min-height: calc(100vh - 80px);
+      background-image: var(--hero-bg);
+      transition: background-image 0.4s ease;
     }
 
-    .container {
-      max-width: 700px;
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    .stress-container {
+      width: 100%;
+      max-width: 800px;
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(12px);
+      padding: 2.5rem 3rem;
+      border-radius: 20px;
+      box-shadow: var(--card-shadow);
+      transform: translateY(20px);
+      opacity: 0;
+      animation: fadeInUp 0.8s 0.2s forwards cubic-bezier(0.165, 0.84, 0.44, 1);
     }
 
-    h1, h2 {
+    @keyframes fadeInUp {
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .stress-header {
       text-align: center;
-      margin-bottom: 15px;
-      color: #333;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 1.5rem;
+      margin-bottom: 2.5rem;
     }
 
-    form {
+    .stress-title {
+      font-family: var(--font-family-heading);
+      font-size: clamp(2.2rem, 5vw, 2.8rem);
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--hero-text-primary);
+    }
+
+    .stress-subtitle {
+      font-size: 1.1rem;
+      color: var(--hero-text-secondary);
+      line-height: 1.6;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    #stressForm {
       display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 2.5rem;
     }
 
-    input, button {
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
+    #stressForm input {
+      padding: 0.8rem 1rem;
+      border-radius: 10px;
+      border: 1px solid var(--card-border);
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-size: 1rem;
+      font-family: var(--font-family);
+      transition: all 0.3s ease;
+      flex-grow: 1;
+    }
+    
+    #stressForm input:focus {
+      outline: none;
+      border-color: var(--underline-color-start);
+      box-shadow: 0 0 10px var(--glow-color);
     }
 
-    button {
-      background: black;
-      color: #fff;
+    #stressForm button {
+      /* Reusing cta-button styles from main css */
       border: none;
-      cursor: pointer;
-      font-weight: bold;
+      font-family: var(--font-family);
+      flex-grow: 1;
+      max-width: 200px;
     }
 
+    #chart-container {
+      margin-bottom: 2.5rem;
+    }
+    
     .forecast-box {
-      margin-top: 20px;
-      padding: 12px;
-      border-radius: 8px;
+      margin-top: 2rem;
+      padding: 1.5rem;
+      border-radius: 15px;
       text-align: center;
-      font-weight: bold;
+      font-size: 1.2rem;
+      font-weight: 600;
+      transition: all 0.4s ease;
     }
 
-    .high { background: #ffe4e4; color: #b91c1c; }
-    .low { background: #e6ffed; color: #166534; }
+    .forecast-box.high { 
+        border: 2px solid #dc3545; 
+        background-color: rgba(220, 53, 69, 0.1); 
+        color: var(--text-color);
+    }
+    .forecast-box.moderate { 
+        border: 2px solid #ffc107; 
+        background-color: rgba(255, 193, 7, 0.1); 
+        color: var(--text-color);
+    }
+    .forecast-box.low { 
+        border: 2px solid #28a745; 
+        background-color: rgba(40, 167, 69, 0.1); 
+        color: var(--text-color);
+    }
+    .forecast-box.empty {
+        border: 2px dashed var(--card-border);
+        color: var(--hero-text-secondary);
+    }
+
   </style>
 </head>
-<body>
-  <div class="container">
-    <h1>📊 Stress Forecasting</h1>
-    <p>Log your daily stress score (0–10) and see forecasted trends.</p>
+<body class="light-mode">
 
-    <form id="stressForm">
-      <input type="date" id="date" required>
-      <input type="number" id="score" min="0" max="10" placeholder="Stress (0–10)" required>
-      <button type="submit">Add Entry</button>
-    </form>
+  <!-- Reusing the main header -->
+  <header class="main-header">
+    <div class="header-content">
+      <div class="logo">
+        <a href="index.html" style="display: flex; align-items: center; text-decoration: none; color: inherit;">
+          <img src="generated-image.png" alt="Aarohan Logo">
+          <h1>AAROHAN</h1>
+        </a>
+      </div>
+      <nav class="main-nav">
+        <a href="chatbot.html">Chatbot</a>
+        <a href="quiz.html">Quiz</a>
+        <a href="mood.html">Mood Journal</a>
+        <a href="music.html">Music</a>
+        <a href="stressForecasting.html">Stress Forecast</a>
+        <a href="gaming.html">Relaxation</a>
+        <a href="sos.html" class="sos-button">
+            <span class="material-icons">sos</span>
+            SOS
+        </a>
+      </nav>
+      <button id="mode-toggle" class="mode-toggle-button">
+        <span class="material-icons sun-icon">wb_sunny</span>
+        <span class="material-icons moon-icon">brightness_2</span>
+      </button>
+    </div>
+  </header>
 
-    <h2>Recent Stress Trend</h2>
-    <canvas id="stressChart"></canvas>
+  <!-- Main content for the stress forecasting page -->
+  <main class="stress-main">
+    <div class="stress-container">
+      <div class="stress-header">
+        <h2 class="stress-title">Stress Forecasting</h2>
+        <p class="stress-subtitle">Log your daily stress score (from 0 to 10) to visualize trends and get a simple forecast of your stress risk.</p>
+      </div>
 
-    <div id="forecastBox" class="forecast-box"></div>
-  </div>
+      <form id="stressForm">
+        <input type="date" id="date" required>
+        <input type="number" id="score" min="0" max="10" placeholder="Stress Score (0-10)" required>
+        <button type="submit" class="cta-button">Add Entry</button>
+      </form>
 
+      <div id="chart-container">
+        <canvas id="stressChart"></canvas>
+      </div>
+
+      <div id="forecastBox" class="forecast-box empty">Add some entries to see your forecast.</div>
+    </div>
+  </main>
+
+  <!-- Reusing the main footer -->
+  <footer class="main-footer">
+    <p>&copy; 2025 Aarohan | For Mental Wellbeing ❤️</p>
+  </footer>
+
+  <!-- All JavaScript for this page is embedded here -->
   <script>
-    const form = document.getElementById("stressForm");
-    const ctx = document.getElementById("stressChart").getContext("2d");
-    const forecastBox = document.getElementById("forecastBox");
+    document.addEventListener('DOMContentLoaded', () => {
+      // --- Theme Toggling & Persistence ---
+      const modeToggle = document.getElementById('mode-toggle');
+      const body = document.body;
 
-    let chartInstance;
-
-    function loadEntries() {
-      return JSON.parse(localStorage.getItem("stressEntries")) || [];
-    }
-
-    function saveEntries(entries) {
-      localStorage.setItem("stressEntries", JSON.stringify(entries));
-    }
-
-    function renderChart(entries) {
-      const labels = entries.map(e => e.date);
-      const scores = entries.map(e => e.score);
-
-      if (chartInstance) {
-        chartInstance.destroy();
-      }
-
-      chartInstance = new Chart(ctx, {
-        type: "line",
-        data: {
-          labels: labels,
-          datasets: [{
-            label: "Stress Score",
-            data: scores,
-            borderColor: "#4a90e2",
-            backgroundColor: "rgba(74,144,226,0.2)",
-            fill: true,
-            tension: 0.3
-          }]
-        },
-        options: {
-          scales: {
-            y: { beginAtZero: true, max: 10 }
-          }
+      const applyTheme = () => {
+        const savedMode = localStorage.getItem('themeMode');
+        if (savedMode === 'dark-mode') {
+            body.classList.add('dark-mode');
+            body.classList.remove('light-mode');
+        } else {
+            body.classList.add('light-mode');
+            body.classList.remove('dark-mode');
         }
+      };
+
+      modeToggle.addEventListener('click', () => {
+          body.classList.toggle('dark-mode');
+          body.classList.toggle('light-mode');
+          const newMode = body.classList.contains('dark-mode') ? 'dark-mode' : 'light-mode';
+          localStorage.setItem('themeMode', newMode);
+          // Redraw chart on theme change to update colors
+          updateUI();
       });
-    }
 
-    function calculateForecast(entries) {
-      if (entries.length === 0) {
-        forecastBox.textContent = "No data yet. Please add entries.";
-        forecastBox.className = "forecast-box";
-        return;
+      // --- Stress Forecasting Functionality ---
+      const form = document.getElementById("stressForm");
+      const ctx = document.getElementById("stressChart").getContext("2d");
+      const forecastBox = document.getElementById("forecastBox");
+      let chartInstance;
+
+      // Function to load entries from localStorage
+      function loadEntries() {
+        try {
+          const entries = localStorage.getItem("stressEntries");
+          // Sort entries by date to ensure the chart is correct
+          return entries ? JSON.parse(entries).sort((a, b) => new Date(a.date) - new Date(b.date)) : [];
+        } catch (e) {
+          console.error("Error parsing stress entries:", e);
+          return [];
+        }
       }
 
-      const last7 = entries.slice(-7);
-      const avg = last7.reduce((sum, e) => sum + e.score, 0) / last7.length;
-
-      if (avg > 6) {
-        forecastBox.textContent = `⚠️ High Stress Risk Ahead (Avg: ${avg.toFixed(1)})`;
-        forecastBox.className = "forecast-box high";
-      } else {
-        forecastBox.textContent = `✅ Low Stress Risk (Avg: ${avg.toFixed(1)})`;
-        forecastBox.className = "forecast-box low";
-      }
-    }
-
-    form.addEventListener("submit", e => {
-      e.preventDefault();
-      const date = document.getElementById("date").value;
-      const score = parseInt(document.getElementById("score").value);
-
-      if (!date || isNaN(score) || score < 0 || score > 10) {
-        alert("Please enter a valid date and stress score between 0–10.");
-        return;
+      // Function to save entries to localStorage
+      function saveEntries(entries) {
+        localStorage.setItem("stressEntries", JSON.stringify(entries));
       }
 
-      const entries = loadEntries();
-      entries.push({ date, score });
-      saveEntries(entries);
+      // Function to render the line chart
+      function renderChart(entries) {
+        const labels = entries.map(e => new Date(e.date).toLocaleDateString([], { month: 'short', day: 'numeric' }));
+        const scores = entries.map(e => e.score);
+        
+        // Check current theme for chart colors
+        const isDarkMode = body.classList.contains('dark-mode');
+        const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+        const labelColor = isDarkMode ? '#c9d1d9' : '#2c3e50';
+        const lineColors = {
+          start: isDarkMode ? '#4facfe' : '#007BFF',
+          end: isDarkMode ? '#00f2fe' : '#0056b3'
+        };
 
-      form.reset();
-      update();
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, `${lineColors.start}80`); // 50% opacity
+        gradient.addColorStop(1, `${lineColors.end}1A`);   // 10% opacity
+        
+        // Destroy the old chart instance if it exists to prevent flickering
+        if (chartInstance) {
+          chartInstance.destroy();
+        }
+
+        chartInstance = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: labels,
+            datasets: [{
+              label: "Stress Score",
+              data: scores,
+              borderColor: lineColors.start,
+              backgroundColor: gradient,
+              fill: true,
+              tension: 0.4, // Makes the line smoother
+              pointBackgroundColor: lineColors.start,
+              pointBorderColor: '#fff',
+              pointHoverRadius: 7,
+              pointRadius: 5
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            scales: {
+              y: { 
+                beginAtZero: true, 
+                max: 10,
+                ticks: { color: labelColor },
+                grid: { color: gridColor }
+              },
+              x: {
+                ticks: { color: labelColor },
+                grid: { color: gridColor }
+              }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        color: labelColor
+                    }
+                }
+            }
+          }
+        });
+      }
+
+      // Function to calculate and display the forecast
+      function calculateForecast(entries) {
+        if (entries.length < 3) { // Need at least 3 entries for a meaningful average
+          forecastBox.textContent = "Add at least 3 entries to see your forecast.";
+          forecastBox.className = "forecast-box empty";
+          return;
+        }
+
+        const lastEntries = entries.slice(-7); // Look at the last 7 entries
+        const avg = lastEntries.reduce((sum, e) => sum + e.score, 0) / lastEntries.length;
+
+        if (avg > 7) {
+          forecastBox.textContent = `High Stress Risk: Your average score for the last ${lastEntries.length} entries is ${avg.toFixed(1)}. Consider taking a break.`;
+          forecastBox.className = "forecast-box high";
+        } else if (avg > 4) {
+          forecastBox.textContent = `Moderate Stress: Your average score is ${avg.toFixed(1)}. Remember to practice self-care.`;
+          forecastBox.className = "forecast-box moderate";
+        } else {
+          forecastBox.textContent = `Low Stress: Your average score is ${avg.toFixed(1)}. You're managing well!`;
+          forecastBox.className = "forecast-box low";
+        }
+      }
+
+      // Event listener for the form submission
+      form.addEventListener("submit", e => {
+        e.preventDefault();
+        const date = document.getElementById("date").value;
+        const score = parseInt(document.getElementById("score").value, 10);
+
+        if (!date || isNaN(score) || score < 0 || score > 10) {
+          alert("Please enter a valid date and a stress score between 0 and 10.");
+          return;
+        }
+
+        const entries = loadEntries();
+        // Check if an entry for this date already exists and update it, otherwise add new
+        const existingEntryIndex = entries.findIndex(entry => entry.date === date);
+        if(existingEntryIndex > -1) {
+            entries[existingEntryIndex].score = score;
+        } else {
+            entries.push({ date, score });
+        }
+        
+        saveEntries(entries);
+        form.reset();
+        document.getElementById('date').valueAsDate = new Date(); // Set date to today after submission
+        updateUI();
+      });
+
+      // A single function to update the whole UI
+      function updateUI() {
+        const entries = loadEntries();
+        renderChart(entries);
+        calculateForecast(entries);
+      }
+
+      // Initial setup on page load
+      applyTheme(); // Set the theme first
+      document.getElementById('date').valueAsDate = new Date(); // Set default date to today
+      updateUI(); // Then update the UI
     });
-
-    function update() {
-      const entries = loadEntries();
-      renderChart(entries);
-      calculateForecast(entries);
-    }
-
-    update();
   </script>
 </body>
 </html>
