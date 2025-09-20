@@ -20,7 +20,8 @@
         <a href="chatbot.html">Chatbot</a>
         <a href="quiz.html">Quiz</a>
         <a href="mood.html">Mood Journal</a>
-        <a href="gaming.html">Relaxation</a>
+        <a href="music.html">Music</a>
+        <a href="gaming.html">Games</a>
         <a href="sos.html" class="sos-button">
             <span class="material-icons">sos</span>
             SOS
@@ -68,14 +69,24 @@
                 <p>Track your daily moods and thoughts to better understand your emotional patterns and well-being.</p>
             </div>
             <div class="card animate-on-scroll">
+                <div class="card-icon">🎵</div>
+                <h3>Calming Music</h3>
+                <p>Listen to a curated list of calming tracks to help you unwind, focus, or fall asleep peacefully.</p>
+            </div>
+            <div class="card animate-on-scroll">
                 <div class="card-icon">🎮</div>
-                <h3>Relaxation Activities</h3>
+                <h3>Mindful Games</h3>
                 <p>Engage in calming games and guided exercises designed to reduce stress and promote mindfulness.</p>
             </div>
             <div class="card animate-on-scroll">
                 <div class="card-icon">❓</div>
                 <h3>Self-Assessment Quiz</h3>
                 <p>Take a quick quiz to gain insight into your current mental state and discover helpful resources.</p>
+            </div>
+             <div class="card animate-on-scroll">
+                <div class="card-icon">💬</div>
+                <h3>Community Support</h3>
+                <p>Connect with peers in a safe, moderated space to share experiences and find encouragement.</p>
             </div>
         </div>
     </section>
@@ -118,9 +129,7 @@
         // --- GSAP Animations ---
         gsap.registerPlugin(ScrollTrigger);
         
-        // **BUG FIX & ENHANCEMENT**: Animate hero title with a clip-path reveal
         const heroTitle = document.querySelector('.hero-title');
-        // Split the text into words, then letters
         const words = heroTitle.textContent.trim().split(' ');
         heroTitle.innerHTML = ''; // Clear original text
         words.forEach(word => {
@@ -143,7 +152,6 @@
             stagger: 0.04,
         });
         
-        // Animate the SVG underline
         gsap.from(".title-underline", {
             duration: 1.5,
             drawSVG: "0%",
@@ -151,8 +159,6 @@
             delay: 0.5
         });
 
-
-        // Scroll-triggered animations for other elements
         const elementsToAnimate = document.querySelectorAll('.animate-on-scroll');
         elementsToAnimate.forEach(el => {
             gsap.from(el, {
@@ -193,13 +199,11 @@
             });
         }
         
-        initParticles(); // Initial call
+        initParticles();
         
-        // Helper plugin for GSAP SVG drawing
         (function(){var h,p,e,s,i,c,t;gsap.registerPlugin({name:"drawSVG",init:function init(q,k){p=document.createElementNS("http://www.w3.org/2000/svg","path");var u=q.tagName.toLowerCase();if(!u in{path:1,line:1,polyline:1,polygon:1,rect:1,ellipse:1,circle:1}){return false}e||(e=gsap.utils.toArray,s=gsap.utils.getUnit,i=gsap.getProperty,c=gsap.utils.normalize,t=Math.PI/180);function v(F){var G,H,I,J,K,L,M,N,O;if(!(F&&F.getBBox)){return}G=F.getBBox();H=(F.ownerSVGElement||document).width.baseVal.value;I=(F.ownerSVGElement||document).height.baseVal.value;J=F.getAttribute("transform");K=F.style;L=K.strokeWidth;M=F.getAttribute("stroke-width");N=F.getAttribute("stroke");O=F.getAttribute("stroke-linecap");F.style.strokeWidth=F.getAttribute("stroke-width")||i(F,"stroke-width")||"1px";F.style.stroke=F.getAttribute("stroke")||i(F,"stroke")||"black";F.style.strokeLinecap=F.getAttribute("stroke-linecap")||i(F,"stroke-linecap")||"butt";F.setAttribute("transform","");this.element=F;this.length=F.getTotalLength();this.BBox=G;this.viewBox={width:H,height:I};F.style.strokeWidth=L;F.style.stroke=N;F.style.strokeLinecap=O;F.setAttribute("transform",J)}this.styles="stroke-dasharray,stroke-dashoffset";this.v=k;this.element=q;this.uncache=true;if(!h){h=new v(q)}if(k===false){this.length=0;return}this.h=h;this.l=h.length;this.element.style.strokeDasharray=this.l+" "+this.l;this.offset=this.l-this.l*parseFloat(k);this.element.style.strokeDashoffset=this.offset},render:function render(q,k){var u=k.offset,B=k.l;k.element.style.strokeDashoffset=u-(B*q-u)*(1-q)}})})();
     });
   </script>
 
 </body>
 </html>
-
